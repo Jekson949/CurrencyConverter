@@ -1,26 +1,56 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { ConverterContainer } from "./components/ConverterContainer/ConverterContainer";
+import { HeaderContainer } from "./components/HeaderContainer/HeaderContainer";
+import axios from 'axios';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export interface Money {
+  r030: number,
+  txt: string,
+  rate: number,
+  cc: string,
+  exchangedate: string,
 }
 
-export default App;
+export const App = () => {
+
+  const [appMoney, setAppMoney] = useState<Money[]>([]);
+
+  const getCurentsis = () => {
+    const apiUrl = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
+    axios.get(apiUrl).then(resp => {
+      const money: Money[] = resp.data.map((item: Money) => {
+        return {
+          r030: item.r030,
+          txt: item.txt,
+          rate: item.rate,
+          cc: item.cc,
+          exchangedate: item.exchangedate,
+        }
+      })
+      setAppMoney(money);
+      const usd = money?.find(x => x.cc == "USD")?.rate;
+      const eur = money?.find(x => x.cc == "EUR")?.rate;
+      if (usd) {
+        setUsd(usd);
+      }
+      if (eur) {
+        setEur(eur);
+      }
+
+    });
+  }
+
+  useEffect(() => {
+    getCurentsis()
+  }, []);
+
+  const [usd, setUsd] = useState(0);
+  const [eur, setEur] = useState(0);
+
+  return (
+    <React.StrictMode>
+      <HeaderContainer usd={usd} eur={eur} currencies={appMoney} />
+      <ConverterContainer usd={usd} eur={eur} />
+    </React.StrictMode>
+  )
+}

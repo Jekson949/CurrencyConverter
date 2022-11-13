@@ -1,0 +1,18 @@
+@import "./../../index.scss";
+
+.converter {
+    display: flex;
+    justify-content: center;
+
+    &__body {
+
+    }
+
+    &__link{
+        text-decoration: none;
+        color: black;
+        &:hover{
+            color: black;
+        }
+    }
+}
