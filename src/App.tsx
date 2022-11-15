@@ -28,16 +28,19 @@ export const App = () => {
         }
       })
       setAppMoney(money);
-      const usd = money?.find(x => x.cc == "USD")?.rate;
-      const eur = money?.find(x => x.cc == "EUR")?.rate;
-      if (usd) {
-        setUsd(usd);
-      }
-      if (eur) {
-        setEur(eur);
-      }
-
+      setInitialData(money);
     });
+  }
+
+  const setInitialData = (money: Money[]) => {
+    const usd = money?.find(x => x.cc == "USD")?.rate;
+    const eur = money?.find(x => x.cc == "EUR")?.rate;
+    if (usd) {
+      setUsd(usd);
+    }
+    if (eur) {
+      setEur(eur);
+    }
   }
 
   useEffect(() => {
